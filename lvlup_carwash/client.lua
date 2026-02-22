@@ -1,10 +1,10 @@
-local meh = require('config')
+local lvlup = require('config')
 
 local isWashing = false
 local currentVehicle = nil
 
 local function washVehicle(vehicle)
-    for _, part in pairs(meh.parts) do
+    for _, part in pairs(lvlup.parts) do
         if part.doorIndex then
             SetVehicleDoorOpen(vehicle, part.doorIndex, false, false)
         end
@@ -22,20 +22,20 @@ local function washVehicle(vehicle)
 
     ClearPedTasks(PlayerPedId())
 
-    for _, part in pairs(meh.parts) do
+    for _, part in pairs(lvlup.parts) do
         if part.doorIndex then SetVehicleDoorShut(vehicle, part.doorIndex, false) end
     end
 
     SetVehicleDirtLevel(vehicle, 0.0)
 
-    if meh.UseR14Evidence then
+    if lvlup.UseR14Evidence then
         local plate = GetVehicleNumberPlateText(vehicle)
         if plate then
             TriggerServerEvent('evidence:server:RemoveCarEvidence', plate)
         end
     end
 
-    meh.notify("Your vehicle is now sparkling clean!", "success")
+    lvlup.notify("Your vehicle is now sparkling clean!", "success")
 end
 
 local function getClosestVehicle(radius)
@@ -57,8 +57,8 @@ local function getClosestVehicle(radius)
 end
 
 local function getWashPrice(dirt)
-    local basePrice = meh.basePrice or 10
-    local multiplier = meh.dirtPriceMultiplier or 15
+    local basePrice = lvlup.basePrice or 10
+    local multiplier = lvlup.dirtPriceMultiplier or 15
     return math.floor(basePrice + dirt * multiplier)
 end
 
@@ -76,7 +76,7 @@ CreateThread(function()
     while true do
         local playerCoords = GetEntityCoords(PlayerPedId())
 
-        for i, washLocation in ipairs(meh.carWashLocations) do
+        for i, washLocation in ipairs(lvlup.carWashLocations) do
             local dist = #(playerCoords - vec3(washLocation.x, washLocation.y, washLocation.z))
 
             if dist < 150.0 then
@@ -100,19 +100,19 @@ CreateThread(function()
                             distance = 2.5,
                             onSelect = function()
                                 if isWashing then
-                                    meh.notify("A car wash is already in progress", "info")
+                                    lvlup.notify("A car wash is already in progress", "info")
                                     return
                                 end
 
                                 local playerPed = PlayerPedId()
                                 if IsPedInAnyVehicle(playerPed, false) then
-                                    meh.notify("Please exit your vehicle", "error")
+                                    lvlup.notify("Please exit your vehicle", "error")
                                     return
                                 end
 
                                 local vehicle, closestDistance = getClosestVehicle(5.0)
                                 if not vehicle or closestDistance > 5.0 then
-                                    meh.notify("You must be near a vehicle", "error")
+                                    lvlup.notify("You must be near a vehicle", "error")
                                     return
                                 end
 
@@ -135,13 +135,13 @@ CreateThread(function()
 
                                 local method = paymentChoice[1]
 
-                                lib.callback('meh:carwash:pay', false, function(success, msg)
+                                lib.callback('lvlup:carwash:pay', false, function(success, msg)
                                     if not success then
-                                        meh.notify(msg or "Payment failed", "error")
+                                        lvlup.notify(msg or "Payment failed", "error")
                                         return
                                     end
 
-                                    meh.notify(msg or "Payment successful", "success")
+                                    lvlup.notify(msg or "Payment successful", "success")
 
                                     isWashing = true
                                     currentVehicle = vehicle

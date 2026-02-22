@@ -1,3 +1,3 @@
 RegisterCommand('raycast', function(source, args, rawCommand)
-    TriggerClientEvent('v-raycast:client:toggle', source)
+    TriggerClientEvent('lvlup:client:toggle', source)
 end, false)

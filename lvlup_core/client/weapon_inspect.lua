@@ -40,5 +40,6 @@ local function DoWeaponInspect()
         end
     end)
 end
+
 RegisterCommand('_inspectweapon', DoWeaponInspect, false)
 RegisterKeyMapping('_inspectweapon', 'Inspect weapon', 'keyboard', '')

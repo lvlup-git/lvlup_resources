@@ -1,6 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-lib.callback.register('meh:carwash:pay', function(source, amount, method)
+lib.callback.register('lvlup:carwash:pay', function(source, amount, method)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return false, "Player not found" end
     if amount <= 0 then return false, "Invalid amount" end

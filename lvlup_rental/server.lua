@@ -18,7 +18,7 @@ local function getPlayerId(source)
     return Player.PlayerData.citizenid or Player.PlayerData.license or Player.PlayerData.steam
 end
 
-lib.callback.register('qb-vehiclerental:server:rent', function(source, plate, model, price)
+lib.callback.register('lvlup:server:rent', function(source, plate, model, price)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return false end
 
@@ -41,7 +41,7 @@ lib.callback.register('qb-vehiclerental:server:rent', function(source, plate, mo
     return true
 end)
 
-lib.callback.register('qb-vehiclerental:server:getRental', function(source, plate)
+lib.callback.register('lvlup:server:getRental', function(source, plate)
     local ownerId = getPlayerId(source)
     if not ownerId then return nil end
 
@@ -59,7 +59,7 @@ lib.callback.register('qb-vehiclerental:server:getRental', function(source, plat
     return nil
 end)
 
-RegisterNetEvent('qb-vehiclerental:server:return', function(plate, amount)
+RegisterNetEvent('lvlup:server:return', function(plate, amount)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end

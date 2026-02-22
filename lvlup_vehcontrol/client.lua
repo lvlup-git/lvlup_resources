@@ -26,7 +26,7 @@ local useLR = false -- default: false = off
 local lrTime = 7 -- every x seconds, the light reminder will play a beep
 RegisterCommand('lr', function() useLR = not useLR end)
 
-local function PlayClick() TriggerEvent('lux_vehcontrol:ELSClick', 'Beep', 0.7) end
+local function PlayClick() TriggerEvent('lvlup:ELSClick', 'Beep', 0.7) end
 
 CreateThread(function()
     while true do
@@ -128,10 +128,10 @@ local function ToggleVehicleSiren()
     local veh = GetPlayerVehicle(true)
     if not veh or IsPauseMenuActive() then return end
     if IsVehicleSirenOn(veh) then
-        TriggerEvent('lux_vehcontrol:ELSClick', 'On', 0.7)
+        TriggerEvent('lvlup:ELSClick', 'On', 0.7)
         SetVehicleSiren(veh, false)
     else
-        TriggerEvent('lux_vehcontrol:ELSClick', 'On', 0.5)
+        TriggerEvent('lvlup:ELSClick', 'On', 0.5)
         Wait(150)
         SetVehicleSiren(veh, true)
         ForceStateBroadcast()
@@ -400,32 +400,32 @@ local function HandleVehicleStateEvent(sender, callback, ...)
     if veh then callback(veh, ...) end
 end
 
-RegisterNetEvent('lvc_TogIndicState_c')
-AddEventHandler('lvc_TogIndicState_c', function(sender, newstate)
+RegisterNetEvent('TogIndicState_c')
+AddEventHandler('TogIndicState_c', function(sender, newstate)
     HandleVehicleStateEvent(sender, ToggleIndicator, newstate)
 end)
 
-AddEventHandler('lux_vehcontrol:ELSClick', function(soundFile, soundVolume)
+AddEventHandler('lvlup:ELSClick', function(soundFile, soundVolume)
     SendNUIMessage({transactionType = 'playSound', transactionFile = soundFile, transactionVolume = soundVolume})
 end)
 
-RegisterNetEvent('lvc_TogDfltSrnMuted_c')
-AddEventHandler('lvc_TogDfltSrnMuted_c', function(sender, toggle)
+RegisterNetEvent('TogDfltSrnMuted_c')
+AddEventHandler('TogDfltSrnMuted_c', function(sender, toggle)
     HandleVehicleStateEvent(sender, ToggleMuteDefaultSiren, toggle)
 end)
 
-RegisterNetEvent('lvc_SetLxSirenState_c')
-AddEventHandler('lvc_SetLxSirenState_c', function(sender, newstate)
+RegisterNetEvent('SetLxSirenState_c')
+AddEventHandler('SetLxSirenState_c', function(sender, newstate)
     HandleVehicleStateEvent(sender, SetLXSirentStateForVehicle, newstate)
 end)
 
-RegisterNetEvent('lvc_TogPwrcallState_c')
-AddEventHandler('lvc_TogPwrcallState_c', function(sender, toggle)
+RegisterNetEvent('TogPwrcallState_c')
+AddEventHandler('TogPwrcallState_c', function(sender, toggle)
     HandleVehicleStateEvent(sender, TogglePowerCallStateForVehicle, toggle)
 end)
 
-RegisterNetEvent('lvc_SetAirManuState_c')
-AddEventHandler('lvc_SetAirManuState_c', function(sender, newstate)
+RegisterNetEvent('SetAirManuState_c')
+AddEventHandler('SetAirManuState_c', function(sender, newstate)
     HandleVehicleStateEvent(sender, SetAirManualStateForVehicle, newstate)
 end)
 
@@ -527,12 +527,12 @@ CreateThread(function()
                     if count_bcast_timer > delay_bcast_timer then
                         count_bcast_timer = 0
                         if vehClass == 18 then
-                            TriggerServerEvent('lvc_TogDfltSrnMuted_s', dsrn_mute)
-                            TriggerServerEvent('lvc_SetLxSirenState_s', state_lxsiren[veh])
-                            TriggerServerEvent('lvc_TogPwrcallState_s', state_pwrcall[veh])
-                            TriggerServerEvent('lvc_SetAirManuState_s', state_airmanu[veh])
+                            TriggerServerEvent('TogDfltSrnMuted_s', dsrn_mute)
+                            TriggerServerEvent('SetLxSirenState_s', state_lxsiren[veh])
+                            TriggerServerEvent('TogPwrcallState_s', state_pwrcall[veh])
+                            TriggerServerEvent('SetAirManuState_s', state_airmanu[veh])
                         end
-                        TriggerServerEvent('lvc_TogIndicState_s', state_indic[veh])
+                        TriggerServerEvent('TogIndicState_s', state_indic[veh])
                     else
                         count_bcast_timer = count_bcast_timer + 1
                     end

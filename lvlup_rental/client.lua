@@ -62,7 +62,7 @@ function rentVehicle(vehicle, spawnCoords)
     local number = tostring(math.random(10 ^ (remaining - 1), (10 ^ remaining) - 1))
     local plate = (prefix .. number):upper()
 
-    local ok = lib.callback.await('qb-vehiclerental:server:rent', false, plate, vehicle.model, vehicle.price)
+    local ok = lib.callback.await('lvlup:server:rent', false, plate, vehicle.model, vehicle.price)
     if not ok then
         return lib.notify({ title = 'Rental Failed', description = 'You don\'t have enough cash!', type = 'error' })
     end
@@ -84,7 +84,7 @@ function tryReturnVehicle()
     local plateRaw = GetVehicleNumberPlateText(veh)
     local plate = plateRaw:gsub("%s+", ""):upper()
 
-    local data = lib.callback.await('qb-vehiclerental:server:getRental', false, plate)
+    local data = lib.callback.await('lvlup:server:getRental', false, plate)
     if not data or not data.price then
         return lib.notify({ title = 'Not a Rental', description = 'This vehicle was not rented through us, or you are not the renter.', type = 'error' })
     end
@@ -97,6 +97,6 @@ function tryReturnVehicle()
     local baseRefund = data.price * Config.RefundPercent
     local finalRefund = math.floor(baseRefund * conditionFactor)
 
-    TriggerServerEvent('qb-vehiclerental:server:return', plate, finalRefund)
+    TriggerServerEvent('lvlup:server:return', plate, finalRefund)
     DeleteVehicle(veh)
 end

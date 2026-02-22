@@ -19,7 +19,7 @@ CreateThread(function()
                     icon = 'fa-solid fa-arrow-up-right-from-square',
                     label = 'Use Elevator',
                     onSelect = function()
-                        TriggerEvent('meh-elevators:showOptions', info)
+                        TriggerEvent('lvlup:client:showOptions', info)
                     end
                 }}
             })
@@ -27,7 +27,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('meh-elevators:showOptions', function(data)
+RegisterNetEvent('lvlup:client:showOptions', function(data)
     local floors = config.elevators[data.elevator]
     if not floors then return end
 
@@ -53,7 +53,7 @@ RegisterNetEvent('meh-elevators:showOptions', function(data)
                 title = floor.FloorName or 'Unknown Floor',
                 description = floor.FloorDesc or 'No description available.',
                 onSelect = function()
-                    TriggerEvent('meh-elevators:use', floor)
+                    TriggerEvent('lvlup:client:use', floor)
                 end
             }
         end
@@ -76,7 +76,7 @@ RegisterNetEvent('meh-elevators:showOptions', function(data)
     lib.showContext('meh_elevator_menu')
 end)
 
-RegisterNetEvent('meh-elevators:use', function(floor)
+RegisterNetEvent('lvlup:client:use', function(floor)
     local ped = PlayerPedId()
     local currentCoords = GetEntityCoords(ped)
 

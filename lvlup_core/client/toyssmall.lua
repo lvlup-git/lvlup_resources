@@ -42,8 +42,8 @@ AddEventHandler('onResourceStop', function(resource)
     end
 end)
 
-RegisterNetEvent('core:client:UseSmallToy')
-AddEventHandler('core:client:UseSmallToy', function(name)
+RegisterNetEvent('lvlup:client:UseSmallToy')
+AddEventHandler('lvlup:client:UseSmallToy', function(name)
     if lastSmallPropName ~= name then
         attachSmallProp(name)
     else

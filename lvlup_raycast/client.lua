@@ -6,10 +6,10 @@ local boundingBoxCache = nil
 local boxColor, lineColor, highlightColor =
     Config.BoxColor, Config.LineColor, Config.HighlightedLineColor
 
-RegisterNetEvent('v-raycast:client:toggle', function()
+RegisterNetEvent('lvlup:client:toggle', function()
     enabled = not enabled
     local state = enabled and "^2enabled^7" or "^1disabled^7"
-    print(("[v-raycast] Raycast %s."):format(state))
+    print(("Raycast %s."):format(state))
 end)
 
 local function RotationToDirection(rot)

@@ -50,12 +50,12 @@ local function attachProp(name)
     lastPropName = name
 
     if data.emoteLoop then
-        TriggerEvent('core:client:loop', data)
+        TriggerEvent('lvlup:client:loop', data)
     end
 end
 
-RegisterNetEvent('core:client:loop')
-AddEventHandler('core:client:loop', function(data)
+RegisterNetEvent('lvlup:client:loop')
+AddEventHandler('lvlup:client:loop', function(data)
     local ped = PlayerPedId()
     while lastPropName ~= nil do
         Wait(550)
@@ -73,8 +73,8 @@ AddEventHandler('onResourceStop', function(resource)
     end
 end)
 
-RegisterNetEvent('core:client:UseToy')
-AddEventHandler('core:client:UseToy', function(name)
+RegisterNetEvent('lvlup:client:UseToy')
+AddEventHandler('lvlup:client:UseToy', function(name)
     if lastPropName ~= name then
         attachProp(name)
     else

@@ -29,10 +29,10 @@ CreateThread(function()
     end)
 
     for k, v in pairs(Config.Toys) do
-        exports.qbx_core:CreateUseableItem(k, function(source, item) TriggerClientEvent('core:client:UseToy', source, item.name) end)
+        exports.qbx_core:CreateUseableItem(k, function(source, item) TriggerClientEvent('lvlup:client:UseToy', source, item.name) end)
     end
 
     for k, v in pairs(Config.SmallToys) do
-        exports.qbx_core:CreateUseableItem(k, function(source, item) TriggerClientEvent('core:client:UseSmallToy', source, item.name) end)
+        exports.qbx_core:CreateUseableItem(k, function(source, item) TriggerClientEvent('lvlup:client:UseSmallToy', source, item.name) end)
     end
 end)
