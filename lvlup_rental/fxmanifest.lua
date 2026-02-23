@@ -17,4 +17,4 @@ server_scripts {
     'server.lua'
 }
 
-dependencies {'ox_lib', 'meh-core'}
+dependencies {'ox_lib', 'lvlup_core'}
