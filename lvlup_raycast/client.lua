@@ -2,14 +2,11 @@ local screenX, screenY = 0.75, 0.5
 local enabled = false
 local lastEntityPos = vector3(0, 0, 0)
 local boundingBoxCache = nil
-
-local boxColor, lineColor, highlightColor =
-    Config.BoxColor, Config.LineColor, Config.HighlightedLineColor
+local boxColor, lineColor, highlightColor = Config.BoxColor, Config.LineColor, Config.HighlightedLineColor
 
 RegisterNetEvent('lvlup:client:toggle', function()
     enabled = not enabled
     local state = enabled and "^2enabled^7" or "^1disabled^7"
-    print(("Raycast %s."):format(state))
 end)
 
 local function RotationToDirection(rot)
@@ -83,8 +80,7 @@ CreateThread(function()
                     local heading = GetEntityHeading(entity)
                     local hash = GetEntityModel(entity)
 
-                    Draw2DText(screenX, screenY, ('%.2f, %.2f, %.2f, %.2f\nHash: %s\nPress [E] to copy coords')
-                        :format(coords.x, coords.y, coords.z, heading, hash))
+                    Draw2DText(screenX, screenY, ('%.2f, %.2f, %.2f, %.2f\nHash: %s\nPress [E] to copy coords'):format(coords.x, coords.y, coords.z, heading, hash))
 
                     if IsControlJustPressed(0, 46) then
                         lib.setClipboard(coordsText)
@@ -98,15 +94,9 @@ CreateThread(function()
                     end
                 end
 
-                -- Draw line and marker for hit
-                DrawLine(playerCoords.x, playerCoords.y, playerCoords.z,
-                         hitCoords.x, hitCoords.y, hitCoords.z,
-                         lineCol.r, lineCol.g, lineCol.b, lineCol.a)
+                DrawLine(playerCoords.x, playerCoords.y, playerCoords.z, hitCoords.x, hitCoords.y, hitCoords.z, lineCol.r, lineCol.g, lineCol.b, lineCol.a)
 
-                DrawMarker(28, hitCoords.x, hitCoords.y, hitCoords.z,
-                           0.0, 0.0, 0.0, 0.0, 180.0, 0.0,
-                           0.1, 0.1, 0.1, lineCol.r, lineCol.g, lineCol.b, lineCol.a,
-                           false, true, 2, nil, nil, false)
+                DrawMarker(28, hitCoords.x, hitCoords.y, hitCoords.z, 0.0, 0.0, 0.0, 0.0, 180.0, 0.0, 0.1, 0.1, 0.1, lineCol.r, lineCol.g, lineCol.b, lineCol.a, false, true, 2, nil, nil, false)
             end
         end
         Wait(0)
