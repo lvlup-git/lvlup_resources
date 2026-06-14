@@ -1,8 +1,10 @@
 return {
+    -- General Settings
     debug = false,
     elevatorTime = 6000, -- Time in milliseconds for elevator animation
     jobCacheDuration = 5000, -- How long to cache player job data (ms)
 
+    -- Elevator Definitions
     elevators = {
         ['Humane Labs'] = {
             {
