@@ -1,7 +1,7 @@
-local Config = lib.require('config')
+local qbx = exports.qbx_core
 
 local function canSetJob(player, jobName)
-    if jobName == "unemployed" then return true end
+    if jobName == 'unemployed' then return true end
     local jobs = player.PlayerData.jobs or {}
     return jobs[jobName] ~= nil
 end
@@ -29,14 +29,25 @@ local function getPlayer(src)
     return player
 end
 
+local function getValidName(name)
+    if type(name) ~= 'string' or name == '' then return end
+    return name
+end
+
+local function getPlayerData(src)
+    local player = getPlayer(src)
+    return player, player and player.PlayerData or nil
+end
+
 RegisterNetEvent('randol_multijob:server:changeJob', function(job)
     local src = source
-    if type(job) ~= 'string' or job == '' then return end
+    job = getValidName(job)
+    if not job then return end
 
-    local player = getPlayer(src)
-    if not player or not player.PlayerData.job then return end
+    local player, playerData = getPlayerData(src)
+    if not playerData or not playerData.job then return end
 
-    if player.PlayerData.job.name == job then
+    if playerData.job.name == job then
         qbx:Notify(src, "You're already employed here", 'error')
         return
     end
@@ -52,7 +63,7 @@ RegisterNetEvent('randol_multijob:server:changeJob', function(job)
         return
     end
 
-    qbx:SetPlayerPrimaryJob(player.PlayerData.citizenid, job)
+    qbx:SetPlayerPrimaryJob(playerData.citizenid, job)
     qbx:Notify(src, ("You're hired at %s"):format(jobInfo.label))
     if player.Functions and player.Functions.SetJobDuty then
         player.Functions.SetJobDuty(false)
@@ -61,12 +72,13 @@ end)
 
 RegisterNetEvent('randol_multijob:server:changeGang', function(gang)
     local src = source
-    if type(gang) ~= 'string' or gang == '' then return end
+    gang = getValidName(gang)
+    if not gang then return end
 
-    local player = getPlayer(src)
-    if not player or not player.PlayerData.gang then return end
+    local player, playerData = getPlayerData(src)
+    if not playerData or not playerData.gang then return end
 
-    if player.PlayerData.gang.name == gang then
+    if playerData.gang.name == gang then
         qbx:Notify(src, "You're already a part of this gang", 'error')
         return
     end
@@ -82,19 +94,24 @@ RegisterNetEvent('randol_multijob:server:changeGang', function(gang)
         return
     end
 
-    qbx:SetPlayerPrimaryGang(player.PlayerData.citizenid, gang)
+    qbx:SetPlayerPrimaryGang(playerData.citizenid, gang)
     qbx:Notify(src, ("You're now a part of %s"):format(gangInfo.label))
 end)
 
 RegisterNetEvent('randol_multijob:server:deleteJob', function(job)
     local src = source
-    if type(job) ~= 'string' or job == '' then return end
+    job = getValidName(job)
+    if not job then return end
 
-    local player = getPlayer(src)
-    if not player or not player.PlayerData.job then return end
+    if job == 'unemployed' then
+        qbx:Notify(src, "You can't quit unemployment.", 'error')
+        return
+    end
+
+    local player, playerData = getPlayerData(src)
+    if not playerData or not playerData.job then return end
 
     local jobInfo = qbx:GetJob(job)
-
     if not jobInfo then
         qbx:Notify(src, 'Invalid job.', 'error')
         return
@@ -105,19 +122,19 @@ RegisterNetEvent('randol_multijob:server:deleteJob', function(job)
         return
     end
 
-    qbx:RemovePlayerFromJob(player.PlayerData.citizenid, job)
+    qbx:RemovePlayerFromJob(playerData.citizenid, job)
     qbx:Notify(src, ("You quit %s"):format(jobInfo.label))
 end)
 
 RegisterNetEvent('randol_multijob:server:deleteGang', function(gang)
     local src = source
-    if type(gang) ~= 'string' or gang == '' then return end
+    gang = getValidName(gang)
+    if not gang then return end
 
-    local player = getPlayer(src)
-    if not player or not player.PlayerData.gang then return end
+    local player, playerData = getPlayerData(src)
+    if not playerData or not playerData.gang then return end
 
     local gangInfo = qbx:GetGang(gang)
-
     if not gangInfo then
         qbx:Notify(src, 'Invalid gang.', 'error')
         return
@@ -128,6 +145,6 @@ RegisterNetEvent('randol_multijob:server:deleteGang', function(gang)
         return
     end
 
-    qbx:RemovePlayerFromGang(player.PlayerData.citizenid, gang)
+    qbx:RemovePlayerFromGang(playerData.citizenid, gang)
     qbx:Notify(src, ("You left %s"):format(gangInfo.label))
 end)

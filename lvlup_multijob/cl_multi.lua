@@ -1,4 +1,22 @@
 local Config = lib.require('config')
+local qbx = exports.qbx_core
+
+local defaultIcon = 'fa-solid fa-briefcase'
+local defaultGangIcon = 'fa-solid fa-user-ninja'
+
+local function getGradeData(groupData, grade)
+    if not groupData or not groupData.grades then return end
+    return groupData.grades[grade] or groupData.grades[tostring(grade)] or groupData.grades[tonumber(grade)]
+end
+
+local function sortedKeys(tbl)
+    local keys = {}
+    for key in pairs(tbl or {}) do
+        keys[#keys + 1] = key
+    end
+    table.sort(keys)
+    return keys
+end
 
 local function ensurePlayerData()
     local playerData = QBX.PlayerData
@@ -11,42 +29,48 @@ local function ensurePlayerData()
         return nil
     end
 
-    -- Multi-job resources can sometimes leave the table nil until the player joins
     playerData.jobs = playerData.jobs or {}
     playerData.gangs = playerData.gangs or {}
     return playerData
+end
+
+local function registerAndShow(context)
+    lib.registerContext(context)
+    lib.showContext(context.id)
 end
 
 local function viewGangs()
     local PlayerData = ensurePlayerData()
     if not PlayerData then return end
 
-    local sharedGangs = qbx:GetGangs()
+    local sharedGangs = qbx:GetGangs() or {}
     local opts = {}
-    for gang, grade in pairs(PlayerData.gangs) do
+    for _, gang in ipairs(sortedKeys(PlayerData.gangs)) do
+        local grade = PlayerData.gangs[gang]
         local data = sharedGangs[gang]
-        if data and data.grades and data.grades[grade] then
+        local gradeData = getGradeData(data, grade)
+        if gradeData then
             local isDisabled = PlayerData.gang.name == gang
             opts[#opts + 1] = {
                 title = data.label,
-                description = ('%s [%s]'):format(data.grades[grade].name, grade),
-                icon = Config.GangIcons[gang] or 'fa-solid fa-user-ninja',
+                description = ('%s [%s]'):format(gradeData.name, grade),
+                icon = Config.GangIcons[gang] or defaultGangIcon,
                 arrow = true,
                 disabled = isDisabled,
                 event = 'randol_multijob:client:choiceMenu',
-                args = {gangLabel = data.label, gang = gang, grade = grade},
+                args = { gangLabel = data.label, gang = gang, grade = grade },
             }
         end
     end
-    lib.registerContext({id = 'gang_menu', menu = 'multi_main', title = 'Current Gang', options = opts})
-    lib.showContext('gang_menu')
+
+    registerAndShow({ id = 'gang_menu', menu = 'multi_main', title = 'Current Gang', options = opts })
 end
 
 local function viewJobs()
     local PlayerData = ensurePlayerData()
     if not PlayerData then return end
 
-    local sharedJobs = qbx:GetJobs()
+    local sharedJobs = qbx:GetJobs() or {}
     local onDuty = PlayerData.job.onduty
     local jobMenu = {
         id = 'job_menu',
@@ -67,14 +91,15 @@ local function viewJobs()
         }
     }
     local seenJobs = {}
-    for job, grade in pairs(PlayerData.jobs) do
+    for _, job in ipairs(sortedKeys(PlayerData.jobs)) do
+        local grade = PlayerData.jobs[job]
         local data = sharedJobs[job]
-        local gradeData = data and data.grades and data.grades[grade]
+        local gradeData = getGradeData(data, grade)
         if gradeData then
             jobMenu.options[#jobMenu.options + 1] = {
                 title = data.label,
                 description = ('%s [%s]\n$%s per paycheck'):format(gradeData.name, grade, gradeData.payment),
-                icon = Config.JobIcons[job] or 'fa-solid fa-briefcase',
+                icon = Config.JobIcons[job] or defaultIcon,
                 arrow = true,
                 disabled = PlayerData.job.name == job,
                 event = 'randol_multijob:client:choiceMenu',
@@ -85,12 +110,12 @@ local function viewJobs()
     end
     if sharedJobs.unemployed and not seenJobs.unemployed then
         local data = sharedJobs.unemployed
-        local gradeData = data.grades and data.grades[0]
+        local gradeData = getGradeData(data, 0)
         if gradeData then
             jobMenu.options[#jobMenu.options + 1] = {
                 title = data.label,
                 description = ('%s [%s]\n$%s per paycheck'):format(gradeData.name, 0, gradeData.payment),
-                icon = Config.JobIcons.unemployed or 'fa-solid fa-user-slash',
+                icon = Config.JobIcons.unemployed or defaultIcon,
                 arrow = true,
                 disabled = PlayerData.job.name == 'unemployed',
                 event = 'randol_multijob:client:choiceMenu',
@@ -98,12 +123,12 @@ local function viewJobs()
             }
         end
     end
-    lib.registerContext(jobMenu)
-    lib.showContext('job_menu')
+
+    registerAndShow(jobMenu)
 end
 
 local function showMainMenu()
-    lib.registerContext({
+    registerAndShow({
         id = 'multi_main',
         title = 'Job Management',
         options = {
@@ -123,7 +148,6 @@ local function showMainMenu()
             }
         }
     })
-    lib.showContext('multi_main')
 end
 
 AddEventHandler('randol_multijob:client:choiceMenu', function(args)
@@ -167,8 +191,12 @@ AddEventHandler('randol_multijob:client:choiceMenu', function(args)
             end
         })
     end
-    lib.registerContext({id = 'choice_menu', title = title, menu = menu, options = options})
-    lib.showContext('choice_menu')
+    registerAndShow({ id = 'choice_menu', title = title, menu = menu, options = options })
 end)
 
-lib.addKeybind({name = 'multi', description = 'Job/Gang Management', defaultKey = 'J', onPressed = function(self) showMainMenu() end})
+lib.addKeybind({
+    name = 'multi',
+    description = 'Job/Gang Management',
+    defaultKey = 'J',
+    onPressed = showMainMenu
+})
