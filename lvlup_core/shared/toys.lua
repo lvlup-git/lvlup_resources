@@ -1,5 +1,5 @@
-Config = {}
-Config.Toys = {
+lvlup_config_toys = {}
+lvlup_config_toys.Toys = {
     ['uwu_humpy'] = {
         ['model'] = 818790301,
         ['animName'] = 'impexp_int-0', ['animDict'] = 'mp_m_waremech_01_dual-0', ['emoteLoop'] = true,
@@ -56,7 +56,7 @@ Config.Toys = {
     }
 }
 
-Config.SmallToys = {
+lvlup_config_toys.SmallToys = {
     ['uwu_humpy_small'] = {
         ['model'] = 'sum_prop_sum_arcade_plush_01a',
         ['x'] = -0.08, ['y'] = 0.0, ['z'] = 0.0,

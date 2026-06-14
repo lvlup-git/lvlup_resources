@@ -1,29 +1,47 @@
-local preventPropSpaz = false
 local isAnimating = false
+local pauseMenuOpen = false
 
-local function clearAnimation()
+local function stopAnimation()
+    if not isAnimating then return end
+
     ClearPedTasks(PlayerPedId())
     ExecuteCommand('e c')
     isAnimating = false
 end
 
-local function startAnimation()
-    if not preventPropSpaz then
-        ExecuteCommand('e map2')
-        isAnimating = true
-        preventPropSpaz = true
-    end
+local function startMapAnimation()
+    if isAnimating then return end
+
+    ExecuteCommand('e map2')
+    isAnimating = true
 end
 
 CreateThread(function()
     while true do
-        if IsPauseMenuActive() then
-            startAnimation()
-            Wait(1)
-        else
-            if isAnimating then clearAnimation() end
-            preventPropSpaz = false
-            Wait(1000)
+        local paused = IsPauseMenuActive()
+
+        if paused ~= pauseMenuOpen then
+            pauseMenuOpen = paused
+
+            if paused then
+                startMapAnimation()
+            else
+                stopAnimation()
+            end
         end
+
+        Wait(250)
+    end
+end)
+
+AddEventHandler('gameEventTriggered', function(event, data)
+    if event == 'CEventDeath' and isAnimating then
+        stopAnimation()
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() and isAnimating then
+        stopAnimation()
     end
 end)

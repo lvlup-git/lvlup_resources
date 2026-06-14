@@ -4638,7 +4638,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.370000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="0.250000" />
@@ -4949,7 +4949,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.370000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="0.250000" />
@@ -5251,7 +5251,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
 		  <TimeBetweenShots value="0.100000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -5562,7 +5562,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.520000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -5865,7 +5865,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="0.750000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.100000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -6186,7 +6186,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.118000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -6511,7 +6511,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.130000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -6823,7 +6823,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.158000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -7157,7 +7157,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.135000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -7495,7 +7495,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.120000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -7807,7 +7807,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.137000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -8101,7 +8101,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.108000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -8403,7 +8403,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="8" />
           <TimeBetweenShots value="0.800000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -8704,7 +8704,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.500000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="2" />
           <TimeBetweenShots value="1.000000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -8969,7 +8969,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.300000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="0.200000" />
@@ -9257,7 +9257,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="1.000000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -9517,7 +9517,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="2.800000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -9754,7 +9754,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.500000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="1.567000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -10024,7 +10024,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="3.300000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="1.200000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -10285,7 +10285,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="-1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.400000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -10483,7 +10483,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="1.220000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -10745,7 +10745,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="1.220000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -10985,7 +10985,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.800000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -11637,7 +11637,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="2.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.800000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -11876,7 +11876,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="-1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.020000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />

@@ -1,48 +1,98 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-local blips = {
-    --{title = 'Bus Station', id = 513, coord = vec2(450.05, -650.92), jobs = {'bus'}},
+local AddBlipForCoord = AddBlipForCoord
+local RemoveBlip = RemoveBlip
+local SetBlipSprite = SetBlipSprite
+local SetBlipDisplay = SetBlipDisplay
+local SetBlipColour = SetBlipColour
+local SetBlipScale = SetBlipScale
+local SetBlipAsShortRange = SetBlipAsShortRange
+local BeginTextCommandSetBlipName = BeginTextCommandSetBlipName
+local AddTextComponentString = AddTextComponentString
+local EndTextCommandSetBlipName = EndTextCommandSetBlipName
+local Wait = Wait
 
-    -- Development Zone [enables being able to set waypoints on cayo perico]
-    {title = 'zBoundry', id = 37, coord = vec2(5771.59, -6211.9), s = 0.0}
+local Blips = {
+    {
+        title = 'Bus station',
+        sprite = 513,
+        coords = { vec2(450.05, -650.92) },
+        jobs = { 'bus' }
+    },
+
+    -- Development / hidden blip
+    {
+        title = 'z',
+        sprite = 37, scale = 0.0,
+        coords = { vec2(5771.59, -6211.9) }
+    }
 }
 
-local createdBlips = {}
+local ActiveBlips = {}
+
 local function RemoveAllBlips()
-    for _, blip in pairs(createdBlips) do RemoveBlip(blip) end
-    createdBlips = {}
+    for i = 1, #ActiveBlips do
+        if DoesBlipExist(ActiveBlips[i]) then
+            RemoveBlip(ActiveBlips[i])
+        end
+    end
+    ActiveBlips = {}
 end
 
-local function HasJobAccess(job, allowedJobs)
+local function HasJobAccess(playerJob, allowedJobs)
     if not allowedJobs then return true end
-    for _, allowed in ipairs(allowedJobs) do
-        if job == allowed then return true end
+    for i = 1, #allowedJobs do
+        if allowedJobs[i] == playerJob then return true end
     end
     return false
 end
 
 local function CreateBlipsForJob(jobName)
+    if not jobName then return end
+
     RemoveAllBlips()
-    for _, blipData in pairs(blips) do
-        if HasJobAccess(jobName, blipData.jobs) then
-            local x, y = blipData.coord.x, blipData.coord.y
-            local blip = AddBlipForCoord(x, y, 0.0)
-            SetBlipSprite(blip, blipData.id or 66)
-            SetBlipDisplay(blip, blipData.d or 2)
-            SetBlipColour(blip, blipData.c or 0)
-            SetBlipScale(blip, blipData.s or 0.7)
-            SetBlipAsShortRange(blip, blipData.shortRange ~= false)
-            BeginTextCommandSetBlipName('STRING')
-            AddTextComponentString(blipData.title)
-            EndTextCommandSetBlipName(blip)
-            table.insert(createdBlips, blip)
+
+    for i = 1, #Blips do
+        local data = Blips[i]
+        if HasJobAccess(jobName, data.jobs) then
+            for c = 1, #data.coords do
+                local coord = data.coords[c]
+                local blip = AddBlipForCoord(coord.x, coord.y, 0.0)
+
+                SetBlipSprite(blip, data.sprite or 66)
+                SetBlipDisplay(blip, data.display or 2)
+                SetBlipColour(blip, data.colour or 0)
+                SetBlipScale(blip, data.scale or 0.7)
+                SetBlipAsShortRange(blip, data.shortRange ~= false)
+
+                BeginTextCommandSetBlipName('STRING')
+                AddTextComponentString(data.title or 'Unnamed Blip')
+                EndTextCommandSetBlipName(blip)
+
+                ActiveBlips[#ActiveBlips + 1] = blip
+            end
         end
     end
 end
 
 CreateThread(function()
-    while not QBCore.Functions.GetPlayerData().job do Wait(200) end
-    CreateBlipsForJob(QBCore.Functions.GetPlayerData().job.name)
+    local playerData
+    repeat
+        playerData = QBCore.Functions.GetPlayerData()
+        Wait(200)
+    until playerData and playerData.job and playerData.job.name
+
+    CreateBlipsForJob(playerData.job.name)
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate', function(job) CreateBlipsForJob(job.name) end)
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(job)
+    if job and job.name then
+        CreateBlipsForJob(job.name)
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        RemoveAllBlips()
+    end
+end)

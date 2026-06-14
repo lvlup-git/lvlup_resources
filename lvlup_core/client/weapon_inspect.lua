@@ -1,7 +1,4 @@
-local sharedAnim = {
-    dict = 'weapons@first_person@aim_idle@p_m_zero@pistol@shared@fidgets@c',
-    anim = 'fidget_med_loop'
-}
+local sharedAnim = {dict = 'weapons@first_person@aim_idle@p_m_zero@pistol@shared@fidgets@c', anim = 'fidget_med_loop'}
 
 local inspectAnims = {
     [`GROUP_PISTOL`] = sharedAnim,
@@ -16,6 +13,17 @@ local inspectAnims = {
     [`GROUP_HEAVY`] = sharedAnim
 }
 
+local function loadAnimDict(dict)
+    if HasAnimDictLoaded(dict) then return true end
+    RequestAnimDict(dict)
+    local timeout = 0
+    while not HasAnimDictLoaded(dict) and timeout < 100 do
+        timeout = timeout + 1
+        Wait(10)
+    end
+    return HasAnimDictLoaded(dict)
+end
+
 local function DoWeaponInspect()
     local ped = PlayerPedId()
     if not IsPedArmed(ped, 7) then return end
@@ -25,10 +33,7 @@ local function DoWeaponInspect()
     if not animData then return end
     local dict, anim = animData.dict, animData.anim
     if IsEntityPlayingAnim(ped, dict, anim, 3) then return end
-    if not HasAnimDictLoaded(dict) then
-        RequestAnimDict(dict)
-        while not HasAnimDictLoaded(dict) do Wait(10) end
-    end
+    if not loadAnimDict(dict) then return end
     TaskPlayAnim(ped, dict, anim, 8.0, -8.0, -1, 48, 0, false, false, false)
     CreateThread(function()
         while IsEntityPlayingAnim(ped, dict, anim, 3) do

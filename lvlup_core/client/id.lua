@@ -1,15 +1,17 @@
 local showServerId = false
 local playerDistances = {}
+local drawDistance = 50
 
 CreateThread(function()
     while true do
         local playerPed = PlayerPedId()
-        local px, py, pz = table.unpack(GetEntityCoords(playerPed, true))
+        local playerPos = GetEntityCoords(playerPed)
         for _, playerId in ipairs(GetActivePlayers()) do
             local targetPed = GetPlayerPed(playerId)
-            local tx, ty, tz = table.unpack(GetEntityCoords(targetPed, true))
-            local dist = math.floor(GetDistanceBetweenCoords(px, py, pz, tx, ty, tz, true))
-            playerDistances[playerId] = dist
+            if targetPed and DoesEntityExist(targetPed) then
+                local targetPos = GetEntityCoords(targetPed)
+                playerDistances[playerId] = math.floor(#(playerPos - targetPos))
+            end
         end
         Wait(1000)
     end
@@ -18,29 +20,32 @@ end)
 CreateThread(function()
     while true do
         if showServerId then
-            for _, playerId in ipairs(GetActivePlayers()) do
+            local players = GetActivePlayers()
+            for _, playerId in ipairs(players) do
                 local dist = playerDistances[playerId]
-                if dist and dist < 50 then
+                if dist and dist < drawDistance then
                     local ped = GetPlayerPed(playerId)
                     if ped and DoesEntityExist(ped) then
                         local headCoords = GetPedBoneCoords(ped, 12844)
                         local x, y, z = table.unpack(headCoords)
                         z = z + 0.2
-                        local playerName = GetPlayerName(playerId)
                         local serverId = GetPlayerServerId(playerId)
-                        local isTalking = NetworkIsPlayerTalking(playerId)
-                        local displayText = (isTalking and "[Talking] " or "") .. '[' .. serverId .. '] '.. playerName
-                        local color = isTalking and 'blue' or nil
-                        DrawText3D(x, y, z, displayText, color)
+                        local name = GetPlayerName(playerId)
+                        local talking = NetworkIsPlayerTalking(playerId)
+                        local displayText = (talking and '[Talking] ' or '') .. '[' .. serverId .. '] ' .. name
+                        DrawText3D(x, y, z, displayText, talking and 'blue' or nil)
                     end
                 end
             end
+            Wait(0)
+        else
+            Wait(500)
         end
-        Wait(0)
     end
 end)
 
 RegisterCommand('showplayerid', function() showServerId = not showServerId end, false)
+
 RegisterKeyMapping('showplayerid', 'Toggle player IDs', 'keyboard', '')
 
 function DrawText3D(x, y, z, text, color)
@@ -48,20 +53,14 @@ function DrawText3D(x, y, z, text, color)
     if not onScreen then return end
     SetTextScale(0.35, 0.35)
     SetTextFont(4)
-    SetTextProportional(1)
+    SetTextCentre(true)
     if color == 'blue' then
         SetTextColour(90, 90, 180, 255)
     else
         SetTextColour(255, 255, 255, 255)
     end
-    SetTextDropshadow(0, 0, 0, 0, 255)
-    SetTextEdge(2, 0, 0, 0, 150)
-    SetTextDropShadow()
     SetTextOutline()
-    SetTextEntry("STRING")
-    SetTextCentre(true)
+    SetTextEntry('STRING')
     AddTextComponentString(text)
-    local width = EndTextCommandGetWidth(1)
-    local height = 0.02
-    EndTextCommandDisplayText(_x - width / 2, _y - height / 2)
+    EndTextCommandDisplayText(_x, _y)
 end

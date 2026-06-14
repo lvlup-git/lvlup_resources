@@ -1,166 +1,202 @@
-SetFlashLightKeepOnWhileMoving(true)
-DisableIdleCamera(true)
-DisableVehiclePassengerIdleCamera(true)
-NetworkSetLocalPlayerSyncLookAt(true)
--- SetWeaponDamageModifier(`WEAPON_MUSKET`, 0.1)
-
-local trainTracks = { 0, 3 }
-for _, track in ipairs(trainTracks) do
-    SwitchTrainTrack(track, true)
-    SetTrainTrackSpawnFrequency(track, 120000)
-end
-SetRandomTrains(true)
-
-local disabledScenarios = {
-    "WORLD_VEHICLE_BIKE_OFF_ROAD_RACE",
-    "WORLD_VEHICLE_BUSINESSMEN",
-    "WORLD_VEHICLE_EMPTY",
-    "WORLD_VEHICLE_MECHANIC",
-    "WORLD_VEHICLE_MILITARY_PLANES_BIG",
-    "WORLD_VEHICLE_MILITARY_PLANES_SMALL",
-    "WORLD_VEHICLE_POLICE_BIKE",
-    "WORLD_VEHICLE_POLICE_CAR",
-    "WORLD_VEHICLE_POLICE_NEXT_TO_CAR",
-    "WORLD_VEHICLE_SALTON_DIRT_BIKE",
-    "WORLD_VEHICLE_SALTON",
-    "WORLD_VEHICLE_STREETRACE"
-}
-
-local disabledEmitters = {
-    "LOS_SANTOS_VANILLA_UNICORN_01_STAGE",
-    "LOS_SANTOS_VANILLA_UNICORN_02_MAIN_ROOM",
-    "LOS_SANTOS_VANILLA_UNICORN_03_BACK_ROOM",
-    "se_dlc_aw_arena_construction_01",
-    "se_dlc_aw_arena_crowd_background_main",
-    "se_dlc_aw_arena_crowd_exterior_lobby",
-    "se_dlc_aw_arena_crowd_interior_lobby"
-}
-
-local function applyWorldSuppression()
-    for _, scenario in ipairs(disabledScenarios) do
-        SetScenarioTypeEnabled(scenario, false)
-    end
-
-    for _, emitter in ipairs(disabledEmitters) do
-        SetStaticEmitterEnabled(emitter, false)
-    end
-end
+local activeScenes = {}
 
 local function ensureAudioSceneActive(name)
-    if not IsAudioSceneActive(name) then
+    if not activeScenes[name] and not IsAudioSceneActive(name) then
         StartAudioScene(name)
+        activeScenes[name] = true
     end
+end
+
+local function InitWorldSettings()
+    SetAudioFlag("DisableFlightMusic", true)
+    SetAudioFlag("PoliceScannerDisabled", true)
+
+    SetFlashLightKeepOnWhileMoving(true)
+    DisableIdleCamera(true)
+    DisableVehiclePassengerIdleCamera(true)
+
+    NetworkSetLocalPlayerSyncLookAt(true)
+    SetRandomEventFlag(false)
+    SetMaxWantedLevel(0)
+    DistantCopCarSirens(false)
+    -- OverrideReactionToVehicleSiren(true, 1)
+
+    SetGlobalPassengerMassMultiplier(0.0)
+
+    ensureAudioSceneActive("CHARACTER_CHANGE_IN_SKY_SCENE")
+    ensureAudioSceneActive("DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE")
+    ensureAudioSceneActive("FBI_HEIST_H5_MUTE_AMBIENCE_SCENE")
 end
 
 CreateThread(function()
+    InitWorldSettings()
+
+    for _, track in ipairs({ 0, 3 }) do
+        SwitchTrainTrack(track, true)
+        SetTrainTrackSpawnFrequency(track, 120000)
+    end
+    SetRandomTrains(true)
+
+    local disabledScenarios = {
+        "WORLD_VEHICLE_BIKE_OFF_ROAD_RACE",
+        "WORLD_VEHICLE_BUSINESSMEN",
+        "WORLD_VEHICLE_EMPTY",
+        "WORLD_VEHICLE_MECHANIC",
+        "WORLD_VEHICLE_MILITARY_PLANES_BIG",
+        "WORLD_VEHICLE_MILITARY_PLANES_SMALL",
+        "WORLD_VEHICLE_POLICE_BIKE",
+        "WORLD_VEHICLE_POLICE_CAR",
+        "WORLD_VEHICLE_POLICE_NEXT_TO_CAR",
+        "WORLD_VEHICLE_SALTON_DIRT_BIKE",
+        "WORLD_VEHICLE_SALTON",
+        "WORLD_VEHICLE_STREETRACE"
+    }
+
+    local disabledEmitters = {
+        "LOS_SANTOS_VANILLA_UNICORN_01_STAGE",
+        "LOS_SANTOS_VANILLA_UNICORN_02_MAIN_ROOM",
+        "LOS_SANTOS_VANILLA_UNICORN_03_BACK_ROOM",
+        "se_dlc_aw_arena_construction_01",
+        "se_dlc_aw_arena_crowd_background_main",
+        "se_dlc_aw_arena_crowd_exterior_lobby",
+        "se_dlc_aw_arena_crowd_interior_lobby"
+    }
+
+    for i = 1, #disabledScenarios do
+        SetScenarioTypeEnabled(disabledScenarios[i], false)
+    end
+
+    for i = 1, #disabledEmitters do
+        SetStaticEmitterEnabled(disabledEmitters[i], false)
+    end
+end)
+
+CreateThread(function()
+    local lastSuppression = 0
+
     while true do
+        local waitTime = 750
         local ped = PlayerPedId()
 
-        SetAudioFlag("DisableFlightMusic", true)
-        SetAudioFlag("PoliceScannerDisabled", true)
-        SetRandomEventFlag(false)
+        if GetGameTimer() - lastSuppression > 10000 then
+            DisablePlayerVehicleRewards(ped)
 
-        applyWorldSuppression()
+            ensureAudioSceneActive("CHARACTER_CHANGE_IN_SKY_SCENE")
+            ensureAudioSceneActive("DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE")
+            ensureAudioSceneActive("FBI_HEIST_H5_MUTE_AMBIENCE_SCENE")
 
-        ensureAudioSceneActive("CHARACTER_CHANGE_IN_SKY_SCENE")
-        ensureAudioSceneActive("DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE")
-        ensureAudioSceneActive("FBI_HEIST_H5_MUTE_AMBIENCE_SCENE")
+            lastSuppression = GetGameTimer()
+        end
 
-        DistantCopCarSirens(false)
-        OverrideReactionToVehicleSiren(true, 1)
-        SetMaxWantedLevel(0)
-        DisablePlayerVehicleRewards(ped)
+        local vehicle = GetVehiclePedIsIn(ped, false)
+        if vehicle ~= 0 and GetPedInVehicleSeat(vehicle, -1) == ped then
+            local class = GetVehicleClass(vehicle)
 
-        Wait(5000)
+            if (
+                class <= 7 or
+                class == 9 or
+                class == 10 or
+                class == 11 or
+                class == 12 or
+                class == 17 or
+                class == 18
+            ) then
+                if IsEntityInAir(vehicle) or IsEntityUpsidedown(vehicle) then
+                    DisableControlAction(2, 59, true) -- Move left/right
+                    DisableControlAction(2, 60, true) -- Move up/down
+                    waitTime = 0
+                end
+            end
+        end
+
+        Wait(waitTime)
     end
 end)
 
 lib.onCache('ped', function(ped)
-    if ped then
-        SetPedConfigFlag(ped, 35, false)
-        SetPedResetFlag(ped, 337, true)
-    end
+    if not ped then return end
+
+    SetPedResetFlag(ped, 200, true) -- Disable combat locomotion
+    SetPedResetFlag(ped, 337, true) -- Disable combat rolls
+
+    SetPedConfigFlag(ped, 35,  false) -- Disable gesture animations
+    SetPedConfigFlag(ped, 184, true)  -- Disable cover usage
+    SetPedConfigFlag(ped, 78,  true)  -- Disable evasive dive
+    SetPedConfigFlag(ped, 185, true)  -- Disable melee events
+    SetPedConfigFlag(ped, 293, true)  -- Disable jumping out of vehicles
+    SetPedConfigFlag(ped, 188, true)  -- Disable crouch aiming
+    SetPedConfigFlag(ped, 32,  false) -- Allow ragdoll
+    SetPedConfigFlag(ped, 142, true)  -- Disable ambient melee reactions
+    SetPedConfigFlag(ped, 26,  false) -- Allow head tracking
 end)
 
 CreateThread(function()
     while true do
         local ped = PlayerPedId()
+
         if IsPedInCover(ped) and not IsPedAimingFromCover(ped) then
             DisableControlAction(2, 24, true)
             DisableControlAction(2, 142, true)
             DisableControlAction(2, 257, true)
-            Wait(1)
+            Wait(0)
         else
-            Wait(500)
+            Wait(750)
         end
     end
 end)
 
-CreateThread(function()
-    while true do
-        local ped = PlayerPedId()
-        if IsPedUsingActionMode(ped) then
-            SetPedUsingActionMode(ped, false, -1, 'DEFAULT_ACTION')
-            Wait(1)
-        else
-            Wait(5000)
-        end
-    end
-end)
-
-RegisterCommand('propstuck', function()
+RegisterCommand("propstuck", function()
     local ped = PlayerPedId()
-    for _, obj in pairs(GetGamePool('CObject')) do
+    local pool = GetGamePool("CObject")
+
+    for i = 1, #pool do
+        local obj = pool[i]
         if IsEntityAttachedToEntity(ped, obj) then
             SetEntityAsMissionEntity(obj, true, true)
             DeleteObject(obj)
         end
     end
-end)
 
-RegisterCommand('record', function(_, args)
+    lib.notify({
+        title = 'Props',
+        description = 'Stuck props cleared!',
+        type = 'success'
+    })
+end, false)
+
+RegisterCommand("record", function(_, args)
     local action = args[1]
-    if action == 'start' then StartRecording(1)
-    elseif action == 'stop' then StopRecordingAndSaveClip()
-    elseif action == 'discard' then StopRecordingAndDiscardClip() end
-end)
 
-RegisterCommand('rockstareditor', ActivateRockstarEditor)
-RegisterCommand('picture', function()
+    if action == "start" then
+        StartRecording(1)
+    elseif action == "stop" then
+        StopRecordingAndSaveClip()
+    elseif action == "discard" then
+        StopRecordingAndDiscardClip()
+    end
+end, false)
+
+RegisterCommand("rockstareditor", ActivateRockstarEditor, false)
+
+RegisterCommand("picture", function()
     BeginTakeHighQualityPhoto()
     SaveHighQualityPhoto(-1)
     FreeMemoryForHighQualityPhoto()
-end)
+end, false)
 
-RegisterKeyMapping('record start', '(Rockstar editor) Start Recording', 'keyboard', '')
-RegisterKeyMapping('record stop', '(Rockstar editor) Stop Recording', 'keyboard', '')
-RegisterKeyMapping('record discard', '(Rockstar editor) Discard Recording', 'keyboard', '')
-RegisterKeyMapping('picture', '(Rockstar editor) Take a Picture', 'keyboard', '')
+RegisterKeyMapping("record start", "(Rockstar Editor) Start Recording", "keyboard", "")
+RegisterKeyMapping("record stop", "(Rockstar Editor) Stop Recording", "keyboard", "")
+RegisterKeyMapping("record discard", "(Rockstar Editor) Discard Recording", "keyboard", "")
+RegisterKeyMapping("picture", "(Rockstar Editor) Take a Picture", "keyboard", "")
 
-local vehicleClassDisableControl = {
-    [0] = true, [1] = true, [2] = true, [3] = true,
-    [4] = true, [5] = true, [6] = true, [7] = true,
-    [8] = false, [9] = true, [10] = true, [11] = true,
-    [12] = true, [13] = false, [14] = false, [15] = false,
-    [16] = false, [17] = true, [18] = true, [19] = false
-}
+AddEventHandler('onResourceStop', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
 
-CreateThread(function()
-    while true do
-        local ped = PlayerPedId()
-        local vehicle = GetVehiclePedIsIn(ped, false)
-
-        if vehicle ~= 0 then
-            local class = GetVehicleClass(vehicle)
-
-            if GetPedInVehicleSeat(vehicle, -1) == ped and vehicleClassDisableControl[class] then
-                if IsEntityInAir(vehicle) or IsEntityUpsidedown(vehicle) then
-                    DisableControlAction(2, 59, true)
-                    DisableControlAction(2, 60, true)
-                end
-            end
+    for name in pairs(activeScenes) do
+        if IsAudioSceneActive(name) then
+            StopAudioScene(name)
         end
-
-        Wait(1000)
     end
+
+    activeScenes = {}
 end)

@@ -72,7 +72,7 @@
           <MinHeadShotDistancePlayer value="5.000000" />
           <MaxHeadShotDistancePlayer value="40.000000" />
           <HeadShotDamageModifierPlayer value="1.000000" />
-          <Damage value="32.000000" />
+          <Damage value="25.000000" />
           <DamageTime value="0.000000" />
           <DamageTimeInVehicle value="0.000000" />
           <DamageTimeInVehicleHeadShot value="0.000000" />
@@ -130,9 +130,9 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
-          <TimeBetweenShots value="0.420000" />
+          <TimeBetweenShots value="0.320000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="0.250000" />
           <SpinUpTime value="0.000000" />
           <SpinTime value="0.000000" />

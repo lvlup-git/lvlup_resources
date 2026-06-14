@@ -125,7 +125,7 @@
           <ReloadTimeMP value="-1.000000" />
           <ReloadTimeSP value="-1.000000" />
           <VehicleReloadTime value="-1.000000" />
-          <AnimReloadRate value="1.000000" />
+          <AnimReloadRate value="0.500000" />
           <BulletsPerAnimLoop value="1" />
           <TimeBetweenShots value="0.000000" />
           <TimeLeftBetweenShotsWhereShouldFireIsCached value="-1.000000" />
@@ -301,7 +301,7 @@
 			  <Item key="0" value="1" />
 			  <Item key="1" value="2" />
 			</Item>
-          </CamoDiffuseTexIdxs>				  
+          </CamoDiffuseTexIdxs>
         </Item>
       </Infos>
     </Item>
