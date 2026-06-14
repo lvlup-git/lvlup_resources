@@ -16,5 +16,3 @@ server_scripts {
     'config.lua',
     'server.lua'
 }
-
-dependencies {'ox_lib', 'lvlup_core'}

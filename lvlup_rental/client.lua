@@ -1,55 +1,23 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local spawnedPeds = {}
 
-CreateThread(function()
-    for _, loc in pairs(Config.Locations) do
-        if loc.pedModel and loc.coords then
-            local ped = exports['lvlup_core']:spawnPed(loc.pedModel, vec3(loc.coords.x, loc.coords.y, loc.coords.z), loc.heading or 0.0,
-                {
-                    {label = 'Rent a Vehicle', icon = 'fas fa-car', onSelect = function() openRentalMenu(loc.spawn) end},
-                    {label = 'Return Rental', icon = 'fas fa-undo', onSelect = function() tryReturnVehicle() end}
-                }
-            )
-            if ped then spawnedPeds[#spawnedPeds + 1] = ped end
-            if loc.blip then
-                local blip = AddBlipForCoord(loc.coords.x, loc.coords.y, loc.coords.z)
-                SetBlipSprite(blip, loc.blip.sprite or 225)
-                SetBlipColour(blip, loc.blip.color or 3)
-                SetBlipScale(blip, loc.blip.scale or 0.8)
-                SetBlipAsShortRange(blip, true)
-                BeginTextCommandSetBlipName('STRING')
-                AddTextComponentString(loc.label or 'Rental')
-                EndTextCommandSetBlipName(blip)
-            end
-        end
-    end
+SetTimeout(500, function()
+    exports.ox_inventory:displayMetadata({
+        renterName = "Renter",
+        vehModel = "Vehicle",
+        vehPlate = "Plate"
+    })
 end)
 
-function openRentalMenu(spawnCoords)
-    if not spawnCoords then return end
-    local hasRental = lib.callback.await('lvlup:server:hasRental', false)
-    local options = {}
-    if hasRental then
-        options[#options + 1] = {title = 'You already have an active rental!', icon = 'fas fa-exclamation-triangle', onSelect = function() end}
-    else
-        for _, vehicle in pairs(Config.Vehicles) do
-            local priceText = (vehicle.price == 0) and 'FREE' or ('$' .. vehicle.price)
-            options[#options + 1] = {title = ('%s - %s'):format(vehicle.label or 'Vehicle', priceText), icon = 'fas fa-car-side', onSelect = function() rentVehicle(vehicle, spawnCoords) end}
-        end
-    end
-
-    lib.registerContext({id = 'vehRentalMenu', title = 'Vehicle Rental', options = options})
-    lib.showContext('vehRentalMenu')
-end
-
-function rentVehicle(vehicle, spawnCoords)
+local function rentVehicle(vehicle, spawnCoords)
     if not vehicle or not spawnCoords then return end
+
     lib.registerContext({
-        id = 'vehRentalConfirm',
+        id = 'vehicle_rental_confirm',
         title = 'Confirm Rental',
         options = {
             {
-                title = ('%s - %s'):format(vehicle.label, (vehicle.price == 0 and 'FREE' or '$' .. vehicle.price)),
+                title = ('%s – %s'):format(vehicle.label, (vehicle.price == 0 and 'FREE' or '$' .. vehicle.price)),
                 icon = 'fas fa-check',
                 onSelect = function()
                     local prefix = (Config.PlatePrefix or 'RENT'):upper():sub(1, 8)
@@ -57,12 +25,14 @@ function rentVehicle(vehicle, spawnCoords)
                     local number = tostring(math.random(10 ^ (remaining - 1), (10 ^ remaining) - 1))
                     local plate = (prefix .. number):upper()
                     local ok, reason = lib.callback.await('lvlup:server:rent', false, plate, vehicle.model, vehicle.price, vehicle.label)
+
                     if not ok then
                         local msg = reason == 'not_enough_cash' and 'You don\'t have enough cash!' or
                                     reason == 'already_has_rental' and 'You already have an active rental!' or
                                     'Rental failed!'
                         return lib.notify({ title = 'Rental Failed', description = msg, type = 'error' })
                     end
+
                     QBCore.Functions.SpawnVehicle(vehicle.model, function(veh)
                         if not veh or veh == 0 then return end
                         SetEntityHeading(veh, spawnCoords.w or 0.0)
@@ -75,14 +45,31 @@ function rentVehicle(vehicle, spawnCoords)
             {title = 'Cancel', icon = 'fas fa-times', onSelect = function() end}
         }
     })
-    lib.showContext('vehRentalConfirm')
+
+    lib.showContext('vehicle_rental_confirm')
 end
 
-exports.ox_inventory:displayMetadata({renter = 'Renter', plate = 'Plate', vehicle = 'Vehicle'})
+local function openRentalMenu(spawnCoords)
+    if not spawnCoords then return end
 
-function tryReturnVehicle()
+    local hasRental = lib.callback.await('lvlup:server:hasRental', false)
+    local options = {}
+
+    if hasRental then
+        options[#options + 1] = {title = 'You already have an active rental!', icon = 'fas fa-exclamation-triangle', onSelect = function() end}
+    else
+        for _, vehicle in pairs(Config.Vehicles) do
+            local priceText = (vehicle.price == 0) and 'FREE' or ('$' .. vehicle.price)
+            options[#options + 1] = {title = ('%s – %s'):format(vehicle.label or 'Vehicle', priceText), icon = 'fas fa-car-side', onSelect = function() rentVehicle(vehicle, spawnCoords) end}
+        end
+    end
+
+    lib.registerContext({id = 'vehicle_rental_menu', title = 'Vehicle Rental', options = options})
+    lib.showContext('vehicle_rental_menu')
+end
+
+local function tryReturnVehicle()
     local ped = PlayerPedId()
-
     local veh = GetVehiclePedIsIn(ped, false)
     if not veh or veh == 0 then return lib.notify({ title = 'Return Failed', description = 'You must be in a vehicle to return it.', type = 'error' }) end
 
@@ -100,15 +87,63 @@ function tryReturnVehicle()
     local conditionFactor = math.max(0.1, avg / 1000)
     local baseRefund = data.price * (Config.RefundPercent or 0.5)
     local finalRefund = math.floor(baseRefund * conditionFactor)
-
     TriggerServerEvent('lvlup:server:return', plate, finalRefund)
+
     DeleteVehicle(veh)
 end
+
+CreateThread(function()
+    for _, loc in pairs(Config.Locations) do
+        if loc.pedModel and loc.coords then
+            local model = joaat(loc.pedModel)
+            RequestModel(model)
+            while not HasModelLoaded(model) do Wait(10) end
+
+            local ped = CreatePed(4, model, loc.coords.x, loc.coords.y, loc.coords.z-1.0, loc.heading or 0.0, false, true)
+            FreezeEntityPosition(ped, true)
+            SetEntityInvincible(ped, true)
+            SetBlockingOfNonTemporaryEvents(ped, true)
+            SetModelAsNoLongerNeeded(model)
+
+            exports.ox_target:addLocalEntity(ped, {
+                {
+                    name = 'rent_vehicle',
+                    icon = 'fas fa-car',
+                    label = 'Rent a Vehicle',
+                    onSelect = function()
+                        openRentalMenu(loc.spawn)
+                    end
+                },
+                {
+                    name = 'return_vehicle',
+                    icon = 'fas fa-undo',
+                    label = 'Return Rental',
+                    onSelect = function()
+                        tryReturnVehicle()
+                    end
+                }
+            })
+
+            spawnedPeds[#spawnedPeds + 1] = ped
+
+            if loc.blip then
+                local blip = AddBlipForCoord(loc.coords.x, loc.coords.y, loc.coords.z)
+                SetBlipSprite(blip, loc.blip.sprite or 225)
+                SetBlipColour(blip, loc.blip.color or 3)
+                SetBlipScale(blip, loc.blip.scale or 0.8)
+                SetBlipAsShortRange(blip, true)
+                BeginTextCommandSetBlipName('STRING')
+                AddTextComponentString(loc.label or 'Rental')
+                EndTextCommandSetBlipName(blip)
+            end
+        end
+    end
+end)
 
 AddEventHandler('onResourceStop', function(resource)
     if resource ~= GetCurrentResourceName() then return end
     for _, ped in ipairs(spawnedPeds) do
-        if DoesEntityExist(ped) then exports['lvlup_core']:deletePed(ped) end
+        if DoesEntityExist(ped) then DeletePed(ped) end
     end
     spawnedPeds = {}
 end)
